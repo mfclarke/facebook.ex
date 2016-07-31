@@ -62,7 +62,7 @@ defmodule Facebook.Graph do
     case :hackney.request(method, url, headers, payload, options) do
       {:ok, _status_code, _headers, client_ref} ->
         {:ok, body} = :hackney.body(client_ref)
-        Logger.info fn ->
+        Logger.debug fn ->
           "body: #{inspect body}"
         end
         case JSON.decode(body) do
