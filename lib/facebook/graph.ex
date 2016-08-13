@@ -98,18 +98,26 @@ defmodule Facebook.Graph do
           "FB Usage reached. Details: #{usage_string}"
         end
         handle_body body
+
       {:ok, 200, [{"x-app-usage", usage_string} | _], client_ref} ->
         {:ok, body} = :hackney.body(client_ref)
         Logger.warn fn ->
           "FB Usage nearly reached. Details: #{usage_string}"
         end
-        handle_body body
+        case JSON.decode(body) do
+          {:ok, data} ->
+            {:json, Map.put(data, "app_usage", usage_string)}
+          _ ->
+            {:body, body}
+        end
+
       {:ok, _status_code, _headers, client_ref} ->
         {:ok, body} = :hackney.body(client_ref)
         Logger.debug fn ->
           "body: #{inspect body}"
         end
         handle_body body
+
       error ->
         Logger.error fn ->
           "error: #{inspect error}"
