@@ -48,6 +48,17 @@ defmodule Facebook.Graph do
     request(:get, url, options)
   end
 
+  @spec post(path, params) :: response
+  def post(path, params) do
+    post(path, params, [])
+  end
+
+  @spec post(path, params, options) :: response
+  def post(path, params, options) do
+    url = :hackney_url.make_url(Config.graph_url, path, params)
+    request(:post, url, options)
+  end
+
   @spec request(method, url, options) :: response
   defp request(method, url, options) do
     request(method, url, <<>>, options)
